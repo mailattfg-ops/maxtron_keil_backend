@@ -37,6 +37,16 @@ app.use('/api/auth', authRoutes); // Auth is Global
 app.use('/api/keil', keilRoutes);
 app.use('/api/maxtron', keilRoutes); // Compatibility alias
 
+// Root endpoint
+app.get('/', (req, res) => {
+    res.json({
+        status: 'ok',
+        service: 'Keil ERP Backend API',
+        health: '/api/health',
+        timestamp: new Date().toISOString()
+    });
+});
+
 // Health Check
 app.get('/api/health', (req, res) => {
     res.json({ status: 'ok', message: 'KEIL ERP Backend is healthy' });
