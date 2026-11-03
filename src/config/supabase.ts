@@ -4,11 +4,15 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY;
+// Secret key first: the backend must not depend on the public key (RLS blocks it).
+const supabaseKey = process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY;
 
 if (!supabaseUrl || !supabaseKey) {
-    throw new Error('SUPABASE_URL and SUPABASE_KEY must be set in .env');
+    throw new Error('SUPABASE_URL and SUPABASE_SECRET_KEY (or SUPABASE_KEY) must be set in .env');
 }
+
+// Which kind of key is in use (never the key itself), shown by /api/verify.
+export const supabaseKeyType = supabaseKey.startsWith('sb_secret_') ? 'secret' : supabaseKey.startsWith('sb_publishable_') ? 'publishable' : 'legacy';
 
 const client = createClient(supabaseUrl, supabaseKey);
 

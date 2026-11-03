@@ -6,7 +6,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import authRoutes from './routes/authRoutes';
 import keilRoutes from './modules/keil/routes';
-import { supabase } from './config/supabase';
+import { supabase, supabaseKeyType } from './config/supabase';
 
 dotenv.config();
 
@@ -20,7 +20,8 @@ app.use(cors({
     },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept']
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
+    maxAge: 7200 // browser reuses the preflight answer for 2h (Chrome's maximum) instead of asking before every call
 }));
 
 app.use(express.json({ limit: '10mb' }));
@@ -68,6 +69,7 @@ app.get('/api/verify', (req, res) => {
     res.json({
         supabase_url: !!process.env.SUPABASE_URL,
         supabase_key: !!process.env.SUPABASE_KEY,
+        supabase_key_type: supabaseKeyType,
         jwt_secret: !!process.env.JWT_SECRET,
         node_env: process.env.NODE_ENV,
         vercel: !!process.env.VERCEL
