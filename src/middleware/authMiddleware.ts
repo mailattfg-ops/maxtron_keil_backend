@@ -33,7 +33,7 @@ export const protect = (req: AuthRequest, res: Response, next: NextFunction) => 
 };
 
 // Logins treated as admin regardless of role (same list as before).
-const ADMIN_EMAILS = ['admin@maxtron.com', 'admin@keil.com', 'admin'];
+const ADMIN_EMAILS = ['admin@keil.com', 'admin'];
 
 const isAdminUser = (user: any) =>
     (user?.role_name || '').toLowerCase() === 'admin' ||

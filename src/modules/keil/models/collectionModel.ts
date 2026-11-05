@@ -23,27 +23,39 @@ export const CollectionModel = {
         return data || [];
     },
 
+    // Dashboard card numbers, added up in the database (migrations/dashboard_summary.sql).
+    getDashboardSummary: async (companyId: string, today: string, branchIds: string[] | null) => {
+        const { data, error } = await supabase.rpc('keil_dashboard_summary', {
+            p_company: companyId, p_today: today, p_branches: branchIds
+        });
+        if (error) throw new Error(error.message);
+        return data;
+    },
+
     // Get specific header with entries
     getHeaderById: async (id: string) => {
-        const { data: header, error: hError } = await supabase
-            .from('keil_collection_headers')
-            .select(`
-                *,
-                route:keil_routes(*)
-            `)
-            .eq('id', id)
-            .single();
+        const [
+            { data: header, error: hError },
+            { data: entries, error: eError }
+        ] = await Promise.all([
+            supabase
+                .from('keil_collection_headers')
+                .select(`
+                    *,
+                    route:keil_routes(*)
+                `)
+                .eq('id', id)
+                .single(),
+            supabase
+                .from('keil_collection_entries')
+                .select(`
+                    *,
+                    hce:keil_hces(*)
+                `)
+                .eq('header_id', id)
+        ]);
 
         if (hError) throw new Error(hError.message);
-
-        const { data: entries, error: eError } = await supabase
-            .from('keil_collection_entries')
-            .select(`
-                *,
-                hce:keil_hces(*)
-            `)
-            .eq('header_id', id);
-
         if (eError) throw new Error(eError.message);
 
         return { ...header, entries };
@@ -100,18 +112,13 @@ export const CollectionModel = {
             .eq('hce_id', hceId)
             .eq('is_visited', true);
 
+        // Filtered in the database (the !inner join above makes this safe): filtering here
+        // only saw the 1000 newest rows, so older date ranges came back incomplete.
+        if (fromDate) query = query.gte('header.collection_date', fromDate);
+        if (toDate) query = query.lte('header.collection_date', toDate);
+
         const { data, error } = await query.order('created_at', { ascending: false });
         if (error) throw new Error(error.message);
-
-        // Filter by date range in application layer (Supabase join column filters are unreliable)
-        let results = data || [];
-        if (fromDate) {
-            results = results.filter((r: any) => r.header?.collection_date >= fromDate);
-        }
-        if (toDate) {
-            results = results.filter((r: any) => r.header?.collection_date <= toDate);
-        }
-
-        return results;
+        return data || [];
     }
 };

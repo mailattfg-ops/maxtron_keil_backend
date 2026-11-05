@@ -3,6 +3,8 @@ import * as OperationController from '../controllers/operationController';
 
 const router = Router();
 
+router.get('/dashboard', OperationController.getDashboardSummary);
+
 // Branch Registry
 router.get('/branches', OperationController.getBranches);
 router.get('/branches/:id', OperationController.getBranch);

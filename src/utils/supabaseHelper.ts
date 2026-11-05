@@ -7,7 +7,7 @@ import { PostgrestFilterBuilder } from '@supabase/postgrest-js';
  */
 export const orderLatest = <T>(query: any) => {
     // In Supabase client, we don't easily know the columns from the builder object.
-    // However, for Maxtron ERP, almost all tables have 'created_at'.
+    // However, for this ERP, almost all tables have 'created_at'.
     // If a table doesn't have it, Supabase will return an error if we use it.
     // So we'll default to 'created_at' and allow override or provide a way to fallback.
     

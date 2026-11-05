@@ -19,7 +19,6 @@ const getUserBranchScope = (req: Request) => {
 
     const isAdmin = 
         user.role_name?.toLowerCase() === 'admin' || 
-        user.email?.toLowerCase() === 'admin@maxtron.com' ||
         user.email?.toLowerCase() === 'admin@keil.com';
 
     if (isAdmin || user.is_all_branches) {
@@ -261,6 +260,22 @@ export const deleteCollectionBatch = async (req: Request, res: Response) => {
     try {
         await CollectionModel.deleteHeader(req.params.id as string);
         res.status(200).json({ success: true, message: 'Collection batch deleted.' });
+    } catch (err: any) {
+        res.status(500).json({ success: false, message: err.message });
+    }
+};
+
+export const getDashboardSummary = async (req: Request, res: Response) => {
+    try {
+        const { company_id, date } = req.query;
+        if (!company_id || !date) {
+            return res.status(400).json({ success: false, message: 'company_id and date are required' });
+        }
+        const { isAllBranches, branchIds } = getUserBranchScope(req);
+        // Same rule as the lists: no branches on the user means no branch limit.
+        const scope = !isAllBranches && branchIds.length > 0 ? branchIds : null;
+        const data = await CollectionModel.getDashboardSummary(company_id as string, date as string, scope);
+        res.status(200).json({ success: true, data });
     } catch (err: any) {
         res.status(500).json({ success: false, message: err.message });
     }

@@ -8,7 +8,7 @@ dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
 const secret = process.env.JWT_SECRET as string;
 
-// User info for demo1 (MAXTRON)
+// User info for demo1 (KEIL)
 const payload = {
   id: 'b2bb6f64-ef94-4312-bdc8-aa87c2d045e3',
   username: 'demo1@gmail.com',
@@ -18,18 +18,18 @@ const payload = {
 const token = jwt.sign(payload, secret, { expiresIn: '1h' });
 
 const API_BASE = 'http://localhost:5004';
-const PRODUCT_API = `${API_BASE}/api/maxtron/products`;
-const EMPLOYEES_API = `${API_BASE}/api/maxtron/employees`;
+const PRODUCT_API = `${API_BASE}/api/keil/products`;
+const EMPLOYEES_API = `${API_BASE}/api/keil/employees`;
 
 async function test() {
   try {
-    const compRes = await fetch(`${API_BASE}/api/maxtron/companies`, {
+    const compRes = await fetch(`${API_BASE}/api/keil/companies`, {
       headers: { 'Authorization': `Bearer ${token}` }
     });
     const compData = await compRes.json();
     console.log("Matched companies in DB count:", compData.data?.length);
 
-    let activeTenant = 'MAXTRON';
+    let activeTenant = 'KEIL';
     let coId = '';
     if (compData.success && Array.isArray(compData.data)) {
       const activeCo = compData.data.find((c: any) => 
@@ -45,7 +45,7 @@ async function test() {
     const [prodRes, empRes, conRes] = await Promise.all([
       fetch(`${PRODUCT_API}${coId ? `?company_id=${coId}` : ''}`, { headers: { 'Authorization': `Bearer ${token}` } }),
       fetch(`${EMPLOYEES_API}`, { headers: { 'Authorization': `Bearer ${token}` } }),
-      fetch(`${API_BASE}/api/maxtron/consumptions${coId ? `?company_id=${coId}` : ''}`, { headers: { 'Authorization': `Bearer ${token}` } })
+      fetch(`${API_BASE}/api/keil/consumptions${coId ? `?company_id=${coId}` : ''}`, { headers: { 'Authorization': `Bearer ${token}` } })
     ]);
 
     const prodData = await prodRes.json();

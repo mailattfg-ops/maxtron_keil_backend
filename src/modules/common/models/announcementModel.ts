@@ -1,7 +1,7 @@
 import { supabase } from '../../../config/supabase';
 
 export const AnnouncementModel = {
-    getAll: async (tenant: 'maxtron' | 'keil') => {
+    getAll: async (tenant: 'keil') => {
         const { data, error } = await supabase
             .from('announcements')
             .select(`

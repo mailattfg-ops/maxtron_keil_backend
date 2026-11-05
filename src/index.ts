@@ -36,7 +36,6 @@ app.use('/api/auth', authRoutes); // Auth is Global
 
 // Keil Module Routes
 app.use('/api/keil', keilRoutes);
-app.use('/api/maxtron', keilRoutes); // Compatibility alias
 
 // Root endpoint
 app.get('/', (req, res) => {

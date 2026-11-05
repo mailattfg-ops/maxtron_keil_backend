@@ -5,8 +5,8 @@ import { AnnouncementModel } from '../models/announcementModel';
 export const getAnnouncements = async (req: AuthRequest, res: Response): Promise<void> => {
     try {
         const { tenant } = req.query;
-        if (!tenant || (tenant !== 'maxtron' && tenant !== 'keil')) {
-            res.status(400).json({ success: false, message: 'Valid tenant (maxtron or keil) is required' });
+        if (!tenant || tenant !== 'keil') {
+            res.status(400).json({ success: false, message: 'Valid tenant (keil) is required' });
             return;
         }
         const data = await AnnouncementModel.getAll(tenant);
