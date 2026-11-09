@@ -29,6 +29,8 @@ router.delete('/routes/:id', OperationController.deleteRoute);
 // Route Assignments (Mappings)
 router.get('/assignments', OperationController.getAssignments);
 router.post('/assignments', OperationController.createAssignment);
+router.post('/assignments/bulk', OperationController.bulkAssign);
+router.put('/assignments/reorder', OperationController.reorderAssignments);
 router.put('/assignments/:id', OperationController.updateAssignment);
 router.delete('/assignments/:id', OperationController.deleteAssignment);
 

@@ -216,6 +216,28 @@ export const updateAssignment = async (req: Request, res: Response) => {
     }
 };
 
+export const bulkAssign = async (req: Request, res: Response) => {
+    try {
+        const { route_id, collection_days, items } = req.body;
+        if (!route_id || !Array.isArray(collection_days) || !collection_days.length || !Array.isArray(items)) {
+            return res.status(400).json({ success: false, message: 'route_id, collection_days and items are required' });
+        }
+        const data = await AssignmentModel.replaceDayList(req.body);
+        res.status(201).json({ success: true, data });
+    } catch (err: any) {
+        res.status(500).json({ success: false, message: err.message });
+    }
+};
+
+export const reorderAssignments = async (req: Request, res: Response) => {
+    try {
+        await AssignmentModel.reorder(req.body.items || []);
+        res.status(200).json({ success: true });
+    } catch (err: any) {
+        res.status(500).json({ success: false, message: err.message });
+    }
+};
+
 export const deleteAssignment = async (req: Request, res: Response) => {
     try {
         await AssignmentModel.removeHce(req.params.id as string);
