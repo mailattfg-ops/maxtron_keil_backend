@@ -9,7 +9,8 @@ export const AssignmentModel = {
                 keil_hces (hce_name, hce_code, address, hce_place, collection_type)
             `)
             .eq('route_id', routeId)
-            .order('sequence_order');
+            .order('sequence_order')
+            .order('created_at');
 
         if (error) throw new Error(error.message);
         return data || [];
@@ -46,9 +47,19 @@ export const AssignmentModel = {
             return { ...data, merged: true };
         }
 
+        // A new link goes last in the route's order, so a list entered in its sheet's order keeps that order
+        const { data: last, error: lastError } = await supabase
+            .from('keil_route_assignments')
+            .select('sequence_order')
+            .eq('route_id', assignmentData.route_id)
+            .order('sequence_order', { ascending: false, nullsFirst: false })
+            .limit(1)
+            .maybeSingle();
+        if (lastError) throw new Error(lastError.message);
+
         const { data, error } = await supabase
             .from('keil_route_assignments')
-            .insert([assignmentData])
+            .insert([{ ...assignmentData, sequence_order: (last?.sequence_order || 0) + 1 }])
             .select()
             .single();
 
