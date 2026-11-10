@@ -53,6 +53,7 @@ export const CollectionModel = {
                     hce:keil_hces(*)
                 `)
                 .eq('header_id', id)
+                .order('sl_no', { ascending: true, nullsFirst: false })
         ]);
 
         if (hError) throw new Error(hError.message);
