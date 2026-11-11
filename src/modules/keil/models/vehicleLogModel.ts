@@ -17,7 +17,7 @@ export const VehicleLogModel = {
             .order('log_date', { ascending: false })
             .order('created_at', { ascending: true }); // same-date trips: first entered first, never shuffled
 
-        if (filters?.vehicle_id) {
+        if (filters?.vehicle_id && filters.vehicle_id !== 'all') { // 'all' = the page's "All vehicles" choice
             query = query.eq('vehicle_id', filters.vehicle_id);
         }
         if (filters?.from_date) {
