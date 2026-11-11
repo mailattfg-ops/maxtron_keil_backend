@@ -14,8 +14,8 @@ export const VehicleLogModel = {
                 )
             `)
             .eq('company_id', companyId)
-            .order('log_date', { ascending: false });
-
+            .order('log_date', { ascending: false })
+            .order('created_at', { ascending: true }); // same-date trips: first entered first, never shuffled
 
         if (filters?.vehicle_id) {
             query = query.eq('vehicle_id', filters.vehicle_id);
