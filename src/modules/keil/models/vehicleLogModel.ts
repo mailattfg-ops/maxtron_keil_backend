@@ -14,8 +14,8 @@ export const VehicleLogModel = {
                 )
             `)
             .eq('company_id', companyId)
-            .order('log_date', { ascending: false })
-            .order('created_at', { ascending: true }); // same-date trips: first entered first, never shuffled
+            .order('created_at', { ascending: true }) // the order they were added: first added first
+            .order('id');
 
         if (filters?.vehicle_id && filters.vehicle_id !== 'all') { // 'all' = the page's "All vehicles" choice
             query = query.eq('vehicle_id', filters.vehicle_id);
